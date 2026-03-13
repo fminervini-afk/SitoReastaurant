@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiki Fish - Registrazione</title>
+    <link rel="icon" href="../imgs/icon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/dark.css">
+</head>
+  <script src="../js/animations.js"></script>
+  <script src="../js/theme.js"></script>
+<body>
+    <nav>
+        <ul class="nav">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="eventi.html">Eventi</a></li>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="prenota.html">Prenota</a></li>
+            <li><a href="prodotti.html">Prodotti tipici</a></li>
+            <li><a href="carrello.html">Carrello</a></li>
+        </ul>
+    </nav>
+
+    <div class="auth-links" aria-label="Accesso utente">
+        <a href="login.html">Login</a>
+        <a href="registrazione.html">Registrati</a>
+    </div>
+
+    <main>
+        <h1>Registrazione</h1>
+        <p class="intro">Crea il tuo account per prenotare piu velocemente e tracciare i tuoi ordini.</p>
+
+        <form id="registration-form">
+            <label for="reg-nome">Nome</label>
+            <input id="reg-nome" type="text" name="reg-nome" required>
+
+            <label for="reg-cognome">Cognome</label>
+            <input id="reg-cognome" type="text" name="reg-cognome" required>
+
+            <label for="reg-email">Email</label>
+            <input id="reg-email" type="email" name="reg-email" required>
+
+            <label for="reg-telefono">Telefono</label>
+            <input id="reg-telefono" type="tel" name="reg-telefono" required>
+
+            <label for="reg-password">Password</label>
+            <input id="reg-password" type="password" name="reg-password" minlength="8" required>
+
+            <label for="reg-password-confirm">Conferma password</label>
+            <input id="reg-password-confirm" type="password" name="reg-password-confirm" minlength="8" required>
+
+            <label class="inline-choice" for="privacy-consent">
+                <input id="privacy-consent" type="checkbox" name="privacy-consent" required>
+                Accetto il trattamento dei dati personali
+            </label>
+
+            <input type="submit" value="Registrati">
+        </form>
+
+        <div class="cta-row">
+            <a class="button-link" href="login.html">Hai gia un account? Accedi</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2021 Tiki Fish. Tutti i diritti riservati. <br>
+        Via Giacomo Matteotti, 108, Bitonto BA <a href="https://maps.app.goo.gl/XUr7wpfGRo3BL5S48" target="_blank">Posizione</a><br>
+        Tel: +39 080 416 80 <br>
+        Social: <a href="https://www.facebook.com/tikifish.burger/" target="_blank">Facebook</a> - <a href="https://www.instagram.com/tikifish.bitonto/" target="_blank">Instagram</a></p>
+    </footer>
+
+    <button id="theme-toggle" aria-label="Attiva tema scuro">🌙</button>
+    <script src="../js/registrazione.js"></script>
+
+</body>
+
+</html>
