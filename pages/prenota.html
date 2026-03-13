@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiki Fish - Prenota</title>
+    <link rel="icon" href="../imgs/icon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/dark.css">
+</head>
+<body>
+    <nav>
+        <ul class="nav">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="eventi.html">Eventi</a></li>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="prodotti.html">Prodotti tipici</a></li>
+            <li><a href="carrello.html">Carrello</a></li>
+        </ul>
+    </nav>
+
+    <div class="auth-links" aria-label="Accesso utente">
+        <a href="login.html">Login</a>
+        <a href="registrazione.html">Registrati</a>
+    </div>
+
+    <main>
+        <h1>Prenota</h1>
+
+        <form>
+            <label for="nome">Nome</label>
+            <input id="nome" type="text" name="nome" required>
+
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" required>
+
+            <label for="evento">Seleziona l'evento</label>
+            <select name="evento" id="evento">
+                <option value="Assassina">Assassina</option>
+                <option value="Karaoke">Karaoke</option>
+                <option value="Fritti e cocktail">Fritti e cocktail</option>
+            </select>
+
+            <label for="data">Data</label>
+            <input id="data" type="date" name="data" required>
+
+            <label for="persone">Numero di persone</label>
+            <input id="persone" type="number" name="persone" min="1" required>
+
+            <input type="submit" value="Prenota">
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2021 Tiki Fish. Tutti i diritti riservati. <br>
+        Via Giacomo Matteotti, 108, Bitonto BA <a href="https://maps.app.goo.gl/XUr7wpfGRo3BL5S48" target="_blank">Posizione</a><br>
+        Tel: +39 080 416 80 <br>
+        Social: <a href="https://www.facebook.com/tikifish.burger/" target="_blank">Facebook</a> - <a href="https://www.instagram.com/tikifish.bitonto/" target="_blank">Instagram</a></p>
+    </footer>
+
+    <button id="theme-toggle" type="button" aria-label="Attiva tema scuro">🌙</button>
+
+    <script src="../js/animations.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+</body>
+
+</html>

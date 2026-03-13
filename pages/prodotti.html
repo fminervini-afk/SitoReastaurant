@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiki Fish - Prodotti tipici pugliesi</title>
+    <link rel="icon" href="../imgs/icon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/dark.css">
+</head>
+<body>
+    <nav>
+        <ul class="nav">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="eventi.html">Eventi</a></li>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="prenota.html">Prenota</a></li>
+            <li><a href="prodotti.html">Prodotti tipici</a></li>
+            <li><a href="carrello.html">Carrello</a></li>
+        </ul>
+    </nav>
+
+    <div class="auth-links" aria-label="Accesso utente">
+        <a href="login.html">Login</a>
+        <a href="registrazione.html">Registrati</a>
+    </div>
+
+    <main>
+        <h1>Prodotti tipici pugliesi</h1>
+        <p class="intro">
+            Seleziona una box di sapori pugliesi da aggiungere al tuo ordine: conserve, pasta artigianale,
+            latticini e specialita del territorio pensate per accompagnare la cucina di Tiki Fish anche a casa.
+        </p>
+
+        <section>
+            <span class="section-label">Selezione del mese</span>
+            <div class="card-grid">
+                <article class="card">
+                    <h3>Burrata di Andria</h3>
+                    <p class="meta-line">€8,50 cad.</p>
+                    <p>Cremosa, fresca e ideale con pane caldo, pomodorini e olio extravergine pugliese.</p>
+                    <div class="option-row">
+                        <label for="burrata-qty">Quantita</label>
+                        <select id="burrata-qty" name="burrata-qty" class="product-qty" data-product-key="burrata">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h3>Taralli artigianali</h3>
+                    <p class="meta-line">€4,00 a confezione</p>
+                    <p>Preparati con vino bianco e olio EVO, perfetti come snack o aperitivo.</p>
+                    <div class="option-row">
+                        <label for="taralli-qty">Quantita</label>
+                        <select id="taralli-qty" name="taralli-qty" class="product-qty" data-product-key="taralli">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h3>Orecchiette fresche</h3>
+                    <p class="meta-line">€5,50 per 500 g</p>
+                    <p>Lavorate a mano secondo tradizione, ideali con cime di rapa o sugo di mare.</p>
+                    <div class="option-row">
+                        <label for="orecchiette-qty">Quantita</label>
+                        <select id="orecchiette-qty" name="orecchiette-qty" class="product-qty" data-product-key="orecchiette">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h3>Olio EVO Terra di Bari</h3>
+                    <p class="meta-line">€11,00 a bottiglia</p>
+                    <p>Fruttato medio, profumo erbaceo e finale leggermente piccante.</p>
+                    <div class="option-row">
+                        <label for="olio-qty">Quantita</label>
+                        <select id="olio-qty" name="olio-qty" class="product-qty" data-product-key="olio">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h3>Friselle integrali</h3>
+                    <p class="meta-line">€4,80 a confezione</p>
+                    <p>Da bagnare leggermente e servire con tonno, pomodoro, origano e capperi.</p>
+                    <div class="option-row">
+                        <label for="friselle-qty">Quantita</label>
+                        <select id="friselle-qty" name="friselle-qty" class="product-qty" data-product-key="friselle">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h3>Capocollo di Martina Franca</h3>
+                    <p class="meta-line">€9,50 per 250 g</p>
+                    <p>Affettato dal gusto pieno e aromatico, ottimo per taglieri e box degustazione.</p>
+                    <div class="option-row">
+                        <label for="capocollo-qty">Quantita</label>
+                        <select id="capocollo-qty" name="capocollo-qty" class="product-qty" data-product-key="capocollo">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="card summary-box">
+            <span class="section-label">Preferenze ordine</span>
+            <p class="summary-total">Totale prodotti selezionati: <span id="products-total">€0,00</span></p>
+            <form>
+                <label for="box">Tipologia box</label>
+                <select id="box" name="box">
+                    <option value="degustazione">Box degustazione per 2 persone</option>
+                    <option value="famiglia">Box famiglia</option>
+                    <option value="regalo">Box regalo premium</option>
+                </select>
+
+                <label for="note-prodotti">Note sui prodotti</label>
+                <input id="note-prodotti" type="text" name="note-prodotti" placeholder="Es. preferenza salato, idea regalo, confezione mista">
+
+                <label class="inline-choice" for="sottovuoto">
+                    <input id="sottovuoto" type="checkbox" name="sottovuoto">
+                    Richiedi confezione sottovuoto per i prodotti freschi
+                </label>
+
+                <label class="inline-choice" for="biglietto">
+                    <input id="biglietto" type="checkbox" name="biglietto">
+                    Aggiungi biglietto regalo personalizzato
+                </label>
+            </form>
+
+            <div class="cta-row">
+                <a class="button-link" href="carrello.html">Vai al carrello</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2021 Tiki Fish. Tutti i diritti riservati. <br>
+        Via Giacomo Matteotti, 108, Bitonto BA <a href="https://maps.app.goo.gl/XUr7wpfGRo3BL5S48" target="_blank">Posizione</a><br>
+        Tel: +39 080 416 80 <br>
+        Social: <a href="https://www.facebook.com/tikifish.burger/" target="_blank">Facebook</a> - <a href="https://www.instagram.com/tikifish.bitonto/" target="_blank">Instagram</a></p>
+    </footer>
+
+    <button id="theme-toggle" type="button" aria-label="Attiva tema scuro">🌙</button>
+
+    <script src="../js/animations.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+</body>
+
+</html>
