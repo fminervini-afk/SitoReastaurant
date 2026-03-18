@@ -72,7 +72,7 @@ function Get-ContentType {
   return "application/octet-stream"
 }
 
-function Handle-CartRequest {
+function Invoke-CartRequest {
   param([Parameter(Mandatory = $true)] [System.Net.HttpListenerContext] $Context)
 
   $request = $Context.Request
@@ -140,7 +140,7 @@ try {
     $path = $request.Url.AbsolutePath
 
     if ($path -eq "/api/carrello") {
-      Handle-CartRequest -Context $context
+      Invoke-CartRequest -Context $context
       continue
     }
 

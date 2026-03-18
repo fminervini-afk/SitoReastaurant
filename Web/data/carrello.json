@@ -1,21 +1,21 @@
 ﻿{
-    "updatedAt":  "2026-03-18T12:00:00.000Z",
-    "totalItems":  2,
-    "totalPrice":  12.5,
+    "updatedAt":  "2026-03-18T12:21:59.287Z",
+    "totalItems":  4,
+    "totalPrice":  25,
     "items":  [
+                  {
+                      "key":  "burrata",
+                      "name":  "Burrata di Andria",
+                      "quantity":  2,
+                      "unitPrice":  8.5,
+                      "subtotal":  17
+                  },
                   {
                       "key":  "taralli",
                       "name":  "Taralli artigianali",
                       "quantity":  2,
                       "unitPrice":  4,
-                      "subtotal":  8.0
-                  },
-                  {
-                      "key":  "friselle",
-                      "name":  "Friselle integrali",
-                      "quantity":  1,
-                      "unitPrice":  4.5,
-                      "subtotal":  4.5
+                      "subtotal":  8
                   }
               ]
 }
