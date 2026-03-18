@@ -1,4 +1,5 @@
 const CART_STORAGE_KEY = "tikiFishCart";
+const CART_API_ENDPOINT = "/api/carrello";
 
 const PRODUCT_CATALOG = {
   burrata: { name: "Burrata di Andria", price: 8.5 },
@@ -38,6 +39,50 @@ function readCart() {
 
 function writeCart(cart) {
   localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  saveCartSnapshotToJsonFile(cart);
+}
+
+function saveCartSnapshotToJsonFile(cart) {
+  const items = getCartItems(cart);
+  const snapshot = {
+    updatedAt: new Date().toISOString(),
+    totalItems: items.reduce((total, item) => total + item.quantity, 0),
+    totalPrice: Number(getCartTotal(items).toFixed(2)),
+    items: items.map((item) => ({
+      key: item.key,
+      name: item.name,
+      quantity: item.quantity,
+      unitPrice: item.price,
+      subtotal: Number(item.subtotal.toFixed(2))
+    }))
+  };
+
+  void persistCartSnapshot(snapshot);
+}
+
+async function persistCartSnapshot(snapshot) {
+  const wasWrittenToServerFile = await writeSnapshotToServerFile(snapshot);
+
+  if (!wasWrittenToServerFile) {
+    // Keep the cart functional even if the local server is not active.
+    console.warn("Impossibile salvare su data/carrello.json. Avvia il server locale con: .\\server.ps1");
+  }
+}
+
+async function writeSnapshotToServerFile(snapshot) {
+  try {
+    const response = await fetch(CART_API_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(snapshot)
+    });
+
+    return response.ok;
+  } catch (_error) {
+    return false;
+  }
 }
 
 function getCartItems(cart) {
