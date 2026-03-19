@@ -5,6 +5,7 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const ROOT_DIR = __dirname;
 const CART_FILE_PATH = path.join(ROOT_DIR, "data", "carrello.json");
+const USERS_FILE_PATH = path.join(ROOT_DIR, "data", "utenti.json");
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -82,6 +83,60 @@ function handleCartSave(req, res) {
   });
 }
 
+function handleRegistrazione(req, res) {
+  let body = "";
+
+  req.on("data", (chunk) => {
+    body += chunk;
+
+    if (body.length > 1_000_000) {
+      req.destroy();
+    }
+  });
+
+  req.on("end", () => {
+    try {
+      const parsed = JSON.parse(body || "{}");
+      const { nome, cognome, email } = parsed;
+
+      if (!nome || !cognome || !email) {
+        sendJson(res, 400, { error: "Dati mancanti" });
+        return;
+      }
+
+      fs.readFile(USERS_FILE_PATH, "utf8", (readError, content) => {
+        let users = [];
+        if (!readError) {
+          try {
+            users = JSON.parse(content) || [];
+          } catch (_e) {
+            users = [];
+          }
+        }
+
+        // (Opzionale) Evitiamo doppie registrazioni sulla stessa email.
+        const emailEsistente = users.some((u) => u.email === email);
+        if (emailEsistente) {
+          sendJson(res, 409, { error: "Email già registrata" });
+          return;
+        }
+
+        users.push({ nome, cognome, email });
+        fs.writeFile(USERS_FILE_PATH, JSON.stringify(users, null, 2), "utf8", (writeError) => {
+          if (writeError) {
+            sendJson(res, 500, { error: "Failed to save users file" });
+            return;
+          }
+
+          sendJson(res, 200, { ok: true });
+        });
+      });
+    } catch (_error) {
+      sendJson(res, 400, { error: "Invalid JSON payload" });
+    }
+  });
+}
+
 const server = http.createServer((req, res) => {
   if (!req.url || !req.method) {
     sendJson(res, 400, { error: "Bad request" });
@@ -99,6 +154,30 @@ const server = http.createServer((req, res) => {
     fs.readFile(CART_FILE_PATH, "utf8", (readError, content) => {
       if (readError) {
         sendJson(res, 500, { error: "Failed to read cart file" });
+        return;
+      }
+
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(content);
+    });
+    return;
+  }
+
+  if (url.pathname === "/api/registrazione" && req.method === "POST") {
+    handleRegistrazione(req, res);
+    return;
+  }
+
+  if (url.pathname === "/api/registrazione" && req.method === "GET") {
+    fs.readFile(USERS_FILE_PATH, "utf8", (readError, content) => {
+      if (readError) {
+        if (readError.code === "ENOENT") {
+          // Nessun utente ancora registrato.
+          sendJson(res, 200, []);
+          return;
+        }
+
+        sendJson(res, 500, { error: "Failed to read users file" });
         return;
       }
 
