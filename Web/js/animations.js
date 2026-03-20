@@ -1,4 +1,3 @@
-const CART_STORAGE_KEY = "tikiFishCart";
 const CART_API_ENDPOINT = "/api/carrello";
 
 const PRODUCT_CATALOG = {
@@ -17,9 +16,82 @@ function formatCurrency(amount) {
   }).format(amount);
 }
 
+function getUtenteAutenticato() {
+  const utente = localStorage.getItem('utenteAutenticato');
+  return utente ? JSON.parse(utente) : null;
+}
+
+function getUserStorageKey() {
+  const utente = getUtenteAutenticato();
+  if (!utente || !utente.nome || !utente.cognome) {
+    return null;
+  }
+  return `DatiUtente_${utente.nome}_${utente.cognome}`;
+}
+
+function readUserData() {
+  const key = getUserStorageKey();
+  if (!key) {
+    return null;
+  }
+
+  try {
+    const data = localStorage.getItem(key);
+    if (!data) {
+      return null;
+    }
+
+    return JSON.parse(data);
+  } catch (_error) {
+    return null;
+  }
+}
+
+function writeUserData(userData) {
+  const key = getUserStorageKey();
+  if (!key) {
+    return;
+  }
+
+  localStorage.setItem(key, JSON.stringify(userData));
+}
+
+async function syncCartFromServer() {
+  const utente = getUtenteAutenticato();
+  if (!utente || !utente.email) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${CART_API_ENDPOINT}?email=${encodeURIComponent(utente.email)}`);
+    if (!response.ok) {
+      return;
+    }
+
+    const data = await response.json();
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      const userData = readUserData() || { nome: utente.nome, cognome: utente.cognome, email: utente.email };
+      userData.cart = data;
+      writeUserData(userData);
+    }
+  } catch (_error) {
+    // Non bloccante
+  }
+}
+
 function readCart() {
   try {
-    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+    const key = getUserStorageKey();
+
+    if (key) {
+      const userData = readUserData();
+      if (userData && userData.cart && typeof userData.cart === "object") {
+        return userData.cart;
+      }
+      return {};
+    }
+
+    const storedCart = localStorage.getItem("tikiFishCart");
 
     if (!storedCart) {
       return {};
@@ -38,7 +110,19 @@ function readCart() {
 }
 
 function writeCart(cart) {
-  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  const key = getUserStorageKey();
+
+  if (!key) {
+    // Fallback in localStorage per utenti anonimi
+    localStorage.setItem("tikiFishCart", JSON.stringify(cart));
+  } else {
+    const userData = readUserData() || getUtenteAutenticato();
+    if (userData) {
+      userData.cart = cart;
+      writeUserData(userData);
+    }
+  }
+
   saveCartSnapshotToJsonFile(cart);
 }
 
@@ -71,12 +155,19 @@ async function persistCartSnapshot(snapshot) {
 
 async function writeSnapshotToServerFile(snapshot) {
   try {
-    const response = await fetch(CART_API_ENDPOINT, {
+    const utente = getUtenteAutenticato();
+    const url = utente ? `${CART_API_ENDPOINT}?email=${encodeURIComponent(utente.email)}` : CART_API_ENDPOINT;
+    const payload = {
+      ...snapshot,
+      user: utente ? utente.email : undefined
+    };
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(snapshot)
+      body: JSON.stringify(payload)
     });
 
     return response.ok;
@@ -106,8 +197,8 @@ function getCartTotal(items) {
   return items.reduce((total, item) => total + item.subtotal, 0);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-
+document.addEventListener("DOMContentLoaded", async () => {
+  await syncCartFromServer();
 
   const revealSelectors = "h2, p, img, video, blockquote, table, ol, ul, form, .card";
   const revealEls = document.querySelectorAll(revealSelectors);

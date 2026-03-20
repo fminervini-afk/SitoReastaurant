@@ -27,6 +27,80 @@ function sendJson(res, statusCode, payload) {
   res.end(JSON.stringify(payload));
 }
 
+function readUsersFile(callback) {
+  fs.readFile(USERS_FILE_PATH, "utf8", (readErr, content) => {
+    if (readErr) {
+      if (readErr.code === "ENOENT") {
+        callback(null, []);
+        return;
+      }
+      callback(readErr);
+      return;
+    }
+
+    try {
+      const users = JSON.parse(content || "[]") || [];
+      callback(null, users);
+    } catch (parseErr) {
+      callback(parseErr);
+    }
+  });
+}
+
+function writeUsersFile(users, callback) {
+  fs.writeFile(USERS_FILE_PATH, JSON.stringify(users, null, 2), "utf8", callback);
+}
+
+function getUserCartFromUsers(userEmail, callback) {
+  if (!userEmail) {
+    callback(null, null);
+    return;
+  }
+
+  readUsersFile((readErr, users) => {
+    if (readErr) {
+      callback(readErr);
+      return;
+    }
+
+    const normalizedEmail = userEmail.trim().toLowerCase();
+    const user = users.find((u) => u.email && u.email.trim().toLowerCase() === normalizedEmail);
+
+    if (!user) {
+      callback(null, {});
+      return;
+    }
+
+    callback(null, user.cart || {});
+  });
+}
+
+function saveUserCart(userEmail, cart, callback) {
+  if (!userEmail) {
+    callback(new Error("User email required"));
+    return;
+  }
+
+  readUsersFile((readErr, users) => {
+    if (readErr) {
+      callback(readErr);
+      return;
+    }
+
+    const normalizedEmail = userEmail.trim().toLowerCase();
+    let user = users.find((u) => u.email && u.email.trim().toLowerCase() === normalizedEmail);
+
+    if (!user) {
+      user = { email: userEmail, cart };
+      users.push(user);
+    } else {
+      user.cart = cart;
+    }
+
+    writeUsersFile(users, callback);
+  });
+}
+
 function serveStaticFile(reqPath, res) {
   const safePath = reqPath === "/" ? "/index.html" : reqPath;
   const filePath = path.normalize(path.join(ROOT_DIR, safePath));
@@ -55,7 +129,7 @@ function serveStaticFile(reqPath, res) {
   });
 }
 
-function handleCartSave(req, res) {
+function handleCartSave(req, res, queryUserEmail) {
   let body = "";
 
   req.on("data", (chunk) => {
@@ -69,7 +143,35 @@ function handleCartSave(req, res) {
   req.on("end", () => {
     try {
       const parsed = JSON.parse(body || "{}");
-      fs.writeFile(CART_FILE_PATH, JSON.stringify(parsed, null, 2), "utf8", (writeError) => {
+      const userEmail = queryUserEmail || parsed.user;
+
+      let cart;
+      if (parsed.items && Array.isArray(parsed.items)) {
+        // takeover from snapshot body
+        cart = parsed.items.reduce((acc, item) => {
+          if (item.key && item.quantity != null) {
+            acc[item.key] = Number(item.quantity);
+          }
+          return acc;
+        }, {});
+      } else if (parsed.cart && typeof parsed.cart === "object") {
+        cart = parsed.cart;
+      } else {
+        cart = parsed;
+      }
+
+      if (userEmail) {
+        saveUserCart(userEmail, cart, (saveErr) => {
+          if (saveErr) {
+            sendJson(res, 500, { error: "Failed to save user cart" });
+            return;
+          }
+          sendJson(res, 200, { ok: true });
+        });
+        return;
+      }
+
+      fs.writeFile(CART_FILE_PATH, JSON.stringify(cart, null, 2), "utf8", (writeError) => {
         if (writeError) {
           sendJson(res, 500, { error: "Failed to save cart file" });
           return;
@@ -146,13 +248,34 @@ const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
 
   if (url.pathname === "/api/carrello" && req.method === "POST") {
-    handleCartSave(req, res);
+    const userEmail = url.searchParams.get("email");
+    handleCartSave(req, res, userEmail);
     return;
   }
 
   if (url.pathname === "/api/carrello" && req.method === "GET") {
+    const userEmail = url.searchParams.get("email");
+
+    if (userEmail) {
+      getUserCartFromUsers(userEmail, (userErr, cart) => {
+        if (userErr) {
+          sendJson(res, 500, { error: "Failed to read user cart" });
+          return;
+        }
+
+        sendJson(res, 200, cart || {});
+      });
+      return;
+    }
+
     fs.readFile(CART_FILE_PATH, "utf8", (readError, content) => {
       if (readError) {
+        if (readError.code === "ENOENT") {
+          // Restituiamo carrello vuoto se non esiste file generico
+          sendJson(res, 200, {});
+          return;
+        }
+
         sendJson(res, 500, { error: "Failed to read cart file" });
         return;
       }
