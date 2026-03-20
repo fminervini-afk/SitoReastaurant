@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  const productSelects = document.querySelectorAll(".product-qty");
+  const productQtyInputs = document.querySelectorAll(".product-qty");
   const productsTotal = document.querySelector("#products-total");
   const cartItemsBody = document.querySelector("#cart-items-body");
   const cartProductsTotal = document.querySelector("#cart-products-total");
@@ -265,31 +265,55 @@ document.addEventListener("DOMContentLoaded", async () => {
     productsTotal.textContent = formatCurrency(total);
   };
 
-  if (productSelects.length) {
+  if (productQtyInputs.length) {
     const initialCart = readCart();
 
-    productSelects.forEach((select) => {
-      const productKey = select.dataset.productKey;
+    const syncCart = (inputEl) => {
+      const productKey = inputEl.dataset.productKey;
+      if (!productKey) return;
 
-      if (!productKey) {
-        return;
+      const nextCart = readCart();
+      const quantity = Math.max(0, Math.floor(Number(inputEl.value) || 0));
+      inputEl.value = String(quantity);
+
+      if (quantity > 0) {
+        nextCart[productKey] = quantity;
+      } else {
+        delete nextCart[productKey];
       }
 
-      select.value = String(Number(initialCart[productKey] || 0));
+      writeCart(nextCart);
+      updateProductsTotal(nextCart);
+    };
 
-      select.addEventListener("change", () => {
-        const nextCart = readCart();
-        const quantity = Number(select.value || 0);
+    productQtyInputs.forEach((input) => {
+      const productKey = input.dataset.productKey;
+      if (!productKey) return;
 
-        if (quantity > 0) {
-          nextCart[productKey] = quantity;
-        } else {
-          delete nextCart[productKey];
-        }
+      input.value = String(Number(initialCart[productKey] || 0));
 
-        writeCart(nextCart);
-        updateProductsTotal(nextCart);
+      input.addEventListener("change", () => {
+        syncCart(input);
       });
+
+      const wrapper = input.closest(".qty-control");
+      if (!wrapper) return;
+
+      const decrementBtn = wrapper.querySelector(".qty-btn.decrement");
+      const incrementBtn = wrapper.querySelector(".qty-btn.increment");
+
+      if (decrementBtn) {
+        decrementBtn.addEventListener("click", () => {
+          input.value = String(Math.max(0, Number(input.value || 0) - 1));
+          syncCart(input);
+        });
+      }
+      if (incrementBtn) {
+        incrementBtn.addEventListener("click", () => {
+          input.value = String(Math.max(0, Number(input.value || 0) + 1));
+          syncCart(input);
+        });
+      }
     });
 
     updateProductsTotal(initialCart);

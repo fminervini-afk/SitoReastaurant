@@ -366,6 +366,52 @@ button:hover {
   margin-top: 14px;
 }
 
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-control .qty-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #176686;
+  background: #eff9ff;
+  color: #176686;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  line-height: 1;
+}
+
+.qty-control .qty-btn:hover {
+  background: #d5efff;
+}
+
+.qty-control input.product-qty {
+  width: 64px;
+  text-align: center;
+  border: 1px solid #b0d7ea;
+  border-radius: 8px;
+  padding: 6px;
+  font-size: 1rem;
+  color: #103f55;
+}
+
+.qty-control input.product-qty::-webkit-outer-spin-button,
+.qty-control input.product-qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qty-control input.product-qty[type=number] {
+  -moz-appearance: textfield;
+}
+
 .inline-choice {
   display: flex;
   align-items: center;
